@@ -1,8 +1,8 @@
-package com.example.bookstore.repository;
+package com.bookstore.repository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.example.bookstore.model.Genre;
+import com.bookstore.model.Genre;
 
 public interface GenreRepository extends MongoRepository<Genre, String>{
     /**

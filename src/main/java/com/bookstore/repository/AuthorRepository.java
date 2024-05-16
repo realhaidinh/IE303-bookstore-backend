@@ -1,10 +1,11 @@
-package com.example.bookstore.repository;
-import com.example.bookstore.model.Author;
+package com.bookstore.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+import com.bookstore.model.Author;
 
 @RepositoryRestResource(collectionResourceRel = "author", path = "author")
 public interface AuthorRepository extends MongoRepository<Author, String>{

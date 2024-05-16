@@ -1,4 +1,4 @@
-package com.example.bookstore.model;
+package com.bookstore.model;
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -1,11 +1,12 @@
-package com.example.bookstore.repository;
+package com.bookstore.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
-import com.example.bookstore.model.Book;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+import com.bookstore.model.Book;
 
 @RepositoryRestResource(collectionResourceRel = "book", path = "book")
 public interface BookRepository extends MongoRepository<Book, String>{
