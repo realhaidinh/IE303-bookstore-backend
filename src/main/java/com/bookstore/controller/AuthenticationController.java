@@ -58,18 +58,16 @@ public class AuthenticationController {
         return new ResponseEntity<User>(savedUser, HttpStatusCode.valueOf(200));
     }
     @PatchMapping("/update")
-    public ResponseEntity<LoginResponse> update(@RequestBody User updateUser) { 
-        User user = userRepository.findByUsername(updateUser.getUsername());
-        if(user == null) {
-            return new ResponseEntity<LoginResponse>(HttpStatusCode.valueOf(404));
+    public ResponseEntity<Boolean> update(@RequestBody User updateUser) { 
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName());
+        if(!updateUser.getPassword().isEmpty()) { 
+            user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         }
-        Authentication auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(updateUser.getUsername(), updateUser.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        String jwt = jwtService.generateToken((CustomUserDetails) auth.getPrincipal());
-        user.setImage(updateUser.getImage());
-        user.setPassword(updateUser.getPassword());
-        return new ResponseEntity<LoginResponse>(new LoginResponse(jwt), HttpStatusCode.valueOf(201));
+        if(!updateUser.getImage().isEmpty()) {
+            user.setImage(updateUser.getImage());
+        }
+        userRepository.save(user);
+        return new ResponseEntity<Boolean>(true, HttpStatusCode.valueOf(200));
     }
 }

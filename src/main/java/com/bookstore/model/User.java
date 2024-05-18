@@ -10,6 +10,9 @@ public class User {
     String password;
     String role;
     String image;
+    public String getId() { 
+        return id;
+    }
     public String getImage() {
         return image;
     }

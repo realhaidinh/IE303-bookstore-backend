@@ -59,7 +59,8 @@ public class WebSecurityConfig {
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
                         .configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/auth/login", "/auth/signup").permitAll()
+                    .requestMatchers(HttpMethod.PATCH, "/auth/update").hasAnyRole("USER", "ADMIN")
                     .requestMatchers(HttpMethod.GET, "/book/**", "/genre/**", "/author/**").permitAll()
                     .requestMatchers(HttpMethod.POST,"/book/**", "/genre/**", "/author/**", "/user/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/book/**", "/genre/**", "/author/**", "/user/**").hasRole("ADMIN")
