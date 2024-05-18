@@ -56,10 +56,10 @@ public class Book {
     public void setDescription(String description) {
         this.description = description;
     }
-    public Integer getstock() {
+    public Integer getStock() {
         return stock;
     }
-    public void setstock(Integer stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
     public Integer getPages() {
