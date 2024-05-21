@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,10 +26,12 @@ public class WebSecurityConfig {
     UserService userService;
     @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -49,24 +52,43 @@ public class WebSecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
+                    .configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests((requests) -> requests
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/signup")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/book/**", "/genre/**", "/author/**")
+                    .permitAll()
+            );
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain privatefilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
                         .configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers(HttpMethod.POST,"/auth/login", "/auth/signup").permitAll()
-                    .requestMatchers(HttpMethod.PATCH, "/auth/update").hasAnyRole("USER", "ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/book/**", "/genre/**", "/author/**").permitAll()
-                    .requestMatchers(HttpMethod.POST,"/book/**", "/genre/**", "/author/**", "/user/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/book/**", "/genre/**", "/author/**", "/user/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PATCH, "/book/**", "/genre/**", "/author/**", "/user/**").hasRole("ADMIN")
-                    .anyRequest().denyAll()
-                );
+                        .requestMatchers(HttpMethod.PATCH, "/auth/update").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/book/**", "/genre/**", "/author/**", "/user/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/book/**", "/genre/**", "/author/**", "/user/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/book/**", "/genre/**", "/author/**", "/user/**")
+                        .hasRole("ADMIN")
+                        .anyRequest().denyAll());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
