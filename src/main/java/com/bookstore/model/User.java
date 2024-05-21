@@ -9,16 +9,16 @@ public class User {
     String username;
     String password;
     String role;
-    String image;
+    String avatar;
     public String getId() { 
         return id;
     }
-    public String getImage() {
-        return image;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getRole() {

@@ -19,7 +19,9 @@ public class Book {
     List<String> images;
     String publisher;
     Date publishDate;
-
+    public String getId() {
+        return id;
+    }
     public Date getpublishDate() {
         return publishDate;
     }

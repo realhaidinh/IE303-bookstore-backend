@@ -1,4 +1,5 @@
 package com.bookstore.controller;
+
 import com.bookstore.CustomUserDetails;
 import com.bookstore.model.LoginRequest;
 import com.bookstore.model.LoginResponse;
@@ -30,42 +31,49 @@ public class AuthenticationController {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
-        if(user == null) {
+        if (user == null) {
             return new ResponseEntity<LoginResponse>(HttpStatusCode.valueOf(404));
         }
         Authentication auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
-      
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwt = jwtService.generateToken((CustomUserDetails) auth.getPrincipal());
-        return new ResponseEntity<LoginResponse>(new LoginResponse(jwt), HttpStatusCode.valueOf(200));
+        return new ResponseEntity<LoginResponse>(
+                new LoginResponse(jwt, user.getUsername(), user.getRole(), user.getAvatar()),
+                HttpStatusCode.valueOf(200));
     }
+
     @PostMapping("/signup")
     public ResponseEntity<User> signup(@RequestBody User user) {
+        if(userRepository.findByUsername(user.getUsername()) != null) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+        }
         User registerUser = new User();
         registerUser.setUsername(user.getUsername());
         registerUser.setPassword(passwordEncoder.encode(user.getPassword()));
         registerUser.setRole("ROLE_USER");
-        registerUser.setImage(user.getImage());
+        registerUser.setAvatar(user.getAvatar());
         User savedUser = userRepository.save(registerUser);
-        if(savedUser == null) {
+        if (savedUser == null) {
             return new ResponseEntity<User>(HttpStatusCode.valueOf(500));
         }
         return new ResponseEntity<User>(savedUser, HttpStatusCode.valueOf(200));
     }
+
     @PatchMapping("/update")
-    public ResponseEntity<Boolean> update(@RequestBody User updateUser) { 
+    public ResponseEntity<Boolean> update(@RequestBody User updateUser) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName());
-        if(!updateUser.getPassword().isEmpty()) { 
+        if (!updateUser.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         }
-        if(!updateUser.getImage().isEmpty()) {
-            user.setImage(updateUser.getImage());
+        if (!updateUser.getAvatar().isEmpty()) {
+            user.setAvatar(updateUser.getAvatar());
         }
         userRepository.save(user);
         return new ResponseEntity<Boolean>(true, HttpStatusCode.valueOf(200));
