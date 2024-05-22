@@ -3,6 +3,7 @@ package com.bookstore.controller;
 import com.bookstore.CustomUserDetails;
 import com.bookstore.model.LoginRequest;
 import com.bookstore.model.LoginResponse;
+import com.bookstore.model.Profile;
 import com.bookstore.model.User;
 import com.bookstore.repository.UserRepository;
 import com.bookstore.service.JwtService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RequestMapping("/auth")
 @RestController
@@ -32,6 +34,7 @@ public class AuthenticationController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    public static final String defaultAvatar = "public/avatar/default.png";
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
@@ -44,20 +47,21 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwt = jwtService.generateToken((CustomUserDetails) auth.getPrincipal());
         return new ResponseEntity<LoginResponse>(
-                new LoginResponse(jwt, user.getUsername(), user.getRole(), user.getAvatar()),
+                new LoginResponse(jwt),
                 HttpStatusCode.valueOf(200));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<User> signup(@RequestBody User user) {
-        if(userRepository.findByUsername(user.getUsername()) != null) {
+        if (userRepository.findByUsername(user.getUsername()) != null) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(400));
         }
         User registerUser = new User();
         registerUser.setUsername(user.getUsername());
         registerUser.setPassword(passwordEncoder.encode(user.getPassword()));
         registerUser.setRole("ROLE_USER");
-        registerUser.setAvatar(user.getAvatar());
+        String avatar = !user.getAvatar().isEmpty() ? user.getAvatar() : defaultAvatar;
+        registerUser.setAvatar(avatar);
         User savedUser = userRepository.save(registerUser);
         if (savedUser == null) {
             return new ResponseEntity<User>(HttpStatusCode.valueOf(500));
@@ -75,7 +79,26 @@ public class AuthenticationController {
         if (!updateUser.getAvatar().isEmpty()) {
             user.setAvatar(updateUser.getAvatar());
         }
-        userRepository.save(user);
-        return new ResponseEntity<Boolean>(true, HttpStatusCode.valueOf(200));
+        try {
+            userRepository.save(user);
+            return new ResponseEntity<Boolean>(true, HttpStatusCode.valueOf(200));
+            
+        } catch (Exception e) {
+            return new ResponseEntity<Boolean>(false, HttpStatusCode.valueOf(400));
+        }
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<Profile> getUserProfile() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var user = (CustomUserDetails) auth.getPrincipal();
+        String role = user.getAuthorities()
+            .stream()
+            .findFirst()
+            .get()
+            .getAuthority(); 
+        var profile = new Profile(user.getUsername(), role, user.getAvatar());
+        return new ResponseEntity<Profile>(profile , HttpStatusCode.valueOf(200));
+    }
+
 }
