@@ -7,7 +7,9 @@ public class Genre {
     String id;
     String name;
     String description;
-    
+    public Genre() { 
+        
+    }
     public String getId() {
         return id;
     }

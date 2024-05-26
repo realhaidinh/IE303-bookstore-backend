@@ -20,7 +20,9 @@ public class Book {
     List<String> images;
     String publisher;
     Date publishDate;
-
+    public Book() {
+        
+    }
     public Book(BookForm bookForm) {
         title = bookForm.getTitle();
         author = bookForm.getAuthor();
@@ -122,5 +124,16 @@ public class Book {
 
     public void setSoldQty(Integer soldQty) {
         this.soldQty = soldQty;
+    }
+    public void set(BookForm bookForm) {
+        title = bookForm.getTitle();
+        author = bookForm.getAuthor();
+        description = bookForm.getDescription();
+        genre = bookForm.getGenre();
+        stock = bookForm.getStock();
+        pages = bookForm.getPages();
+        price = bookForm.getPrice();
+        publishDate = bookForm.getPublishDate();
+        publisher = bookForm.getPublisher();
     }
 }

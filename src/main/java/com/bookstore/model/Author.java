@@ -8,7 +8,9 @@ public class Author {
     String name;
     String information;
     String image;
-
+    public Author() {
+        
+    }
     public Author(AuthorForm authorForm) {
         name = authorForm.getName();
         information = authorForm.getInformation();

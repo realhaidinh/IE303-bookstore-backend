@@ -57,7 +57,6 @@ public class WebSecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -66,7 +65,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/signup")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/book/**", "/genre/**", "/author/**")
+                        .requestMatchers(HttpMethod.GET, "/api/book", "/api/genre", "/api/author")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/images/**")
                         .permitAll()
@@ -74,11 +73,11 @@ public class WebSecurityConfig {
                         .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/auth/update")
                         .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/book", "/genre", "/api/author", "/user")
+                        .requestMatchers(HttpMethod.POST, "/api/book", "api/genre", "/api/author", "api/user")
                         .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/book/**", "/genre/**", "/author/**", "/user/**")
+                        .requestMatchers(HttpMethod.DELETE, "/api/book", "api/genre", "/api/author", "api/user")
                         .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/book/**", "/genre/**", "/author/**", "/user/**")
+                        .requestMatchers(HttpMethod.PATCH, "/api/book", "api/genre", "api/author", "api/user")
                         .hasRole("ADMIN")
                         .anyRequest().denyAll());
         http.authenticationProvider(authenticationProvider());
