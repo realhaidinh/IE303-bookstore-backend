@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/signup")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/book", "/api/genre", "/api/author")
+                        .requestMatchers(HttpMethod.GET, "/api/book/**", "/api/genre/**", "/api/author/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/images/**")
                         .permitAll()

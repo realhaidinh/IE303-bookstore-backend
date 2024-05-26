@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,11 +28,10 @@ public class AuthorController {
     AuthorRepository authorRepository;
     @Autowired
     FileStorageService fileStorageService;
-    @GetMapping()
-    public Author findAuthorByName(@RequestParam("name") String name) {
+    @GetMapping("/{name}")
+    public Author findAuthorByName(@PathVariable("name") String name) {
         return authorRepository.findByName(name);
     }
-    @GetMapping()
     
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createAuthor(@ModelAttribute AuthorForm authorForm, @RequestParam("image") MultipartFile file) {
