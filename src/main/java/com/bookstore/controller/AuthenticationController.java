@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RestController
 public class AuthenticationController {
     @Autowired
@@ -60,8 +60,6 @@ public class AuthenticationController {
         registerUser.setUsername(user.getUsername());
         registerUser.setPassword(passwordEncoder.encode(user.getPassword()));
         registerUser.setRole("ROLE_USER");
-        String avatar = !user.getAvatar().isEmpty() ? user.getAvatar() : defaultAvatar;
-        registerUser.setAvatar(avatar);
         User savedUser = userRepository.save(registerUser);
         if (savedUser == null) {
             return new ResponseEntity<User>(HttpStatusCode.valueOf(500));
@@ -75,9 +73,6 @@ public class AuthenticationController {
         User user = userRepository.findByUsername(authentication.getName());
         if (!updateUser.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
-        }
-        if (!updateUser.getAvatar().isEmpty()) {
-            user.setAvatar(updateUser.getAvatar());
         }
         try {
             userRepository.save(user);
@@ -97,7 +92,7 @@ public class AuthenticationController {
             .findFirst()
             .get()
             .getAuthority(); 
-        var profile = new Profile(user.getUsername(), role, user.getAvatar());
+        var profile = new Profile(user.getUsername(), role);
         return new ResponseEntity<Profile>(profile , HttpStatusCode.valueOf(200));
     }
 

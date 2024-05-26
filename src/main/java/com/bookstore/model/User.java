@@ -9,19 +9,10 @@ public class User {
     String username;
     String password;
     String role;
-    String avatar;
     
     public String getId() { 
         return id;
     }
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
     public String getRole() {
         return role;
     }

@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -58,34 +57,24 @@ public class WebSecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
-                    .configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/signup")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/book/**", "/genre/**", "/author/**")
-                    .permitAll()
-            );
-        return http.build();
-    }
 
     @Bean
-    @Order(2)
-    public SecurityFilterChain privatefilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
                         .configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.GET, "/auth/profile")
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/signup")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/book/**", "/genre/**", "/author/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/images/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/profile")
                         .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/auth/update")
+                        .requestMatchers(HttpMethod.PATCH, "/api/auth/update")
                         .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/book/**", "/genre/**", "/author/**", "/user/**")
+                        .requestMatchers(HttpMethod.POST, "/api/book", "/genre", "/api/author", "/user")
                         .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/book/**", "/genre/**", "/author/**", "/user/**")
                         .hasRole("ADMIN")

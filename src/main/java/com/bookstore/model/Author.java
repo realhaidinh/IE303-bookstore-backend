@@ -8,22 +8,36 @@ public class Author {
     String name;
     String information;
     String image;
-    
+
+    public Author(AuthorForm authorForm) {
+        name = authorForm.getName();
+        information = authorForm.getInformation();
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getInformation() {
         return information;
     }
+
     public void setInformation(String information) {
         this.information = information;
     }
+
     public String getImage() {
         return image;
     }
+
     public void setImage(String image) {
         this.image = image;
     }
