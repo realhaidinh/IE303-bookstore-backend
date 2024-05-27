@@ -106,7 +106,7 @@ public class BookController {
             return new ResponseEntity<Book>(result, HttpStatusCode.valueOf(201));
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(),HttpStatusCode.valueOf(400));
         }
     }
 
@@ -154,7 +154,7 @@ public class BookController {
             return new ResponseEntity<Book>(result, HttpStatusCode.valueOf(201));
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
 }

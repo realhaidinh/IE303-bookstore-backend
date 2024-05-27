@@ -51,7 +51,7 @@ public class OrderController {
             Order order = orderRepository.findById(id).get();
             return new ResponseEntity<>(order, HttpStatusCode.valueOf(200));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(404));
         }
     }
 
@@ -75,7 +75,7 @@ public class OrderController {
             orderRepository.save(order);
             return new ResponseEntity<>(order, HttpStatusCode.valueOf(200));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
 
@@ -108,7 +108,7 @@ public class OrderController {
             orderRepository.save(order);
             return new ResponseEntity<>(HttpStatusCode.valueOf(200));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
 

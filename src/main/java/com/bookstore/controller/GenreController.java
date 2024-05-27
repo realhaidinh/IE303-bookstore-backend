@@ -71,7 +71,7 @@ public class GenreController {
             return new ResponseEntity<>(HttpStatusCode.valueOf(200));
             
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
     @PatchMapping()

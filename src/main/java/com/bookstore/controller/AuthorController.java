@@ -61,7 +61,7 @@ public class AuthorController {
             authorRepository.save(author);
             return new ResponseEntity<>(author, HttpStatusCode.valueOf(201));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
     @DeleteMapping()
@@ -96,7 +96,7 @@ public class AuthorController {
             var result = authorRepository.save(author);
             return new ResponseEntity<>(result, HttpStatusCode.valueOf(200));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
 }
