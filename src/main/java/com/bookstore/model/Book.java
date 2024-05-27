@@ -21,7 +21,7 @@ public class Book {
     String publisher;
     Date publishDate;
     public Book() {
-        
+        soldQty = 0;
     }
     public Book(BookForm bookForm) {
         title = bookForm.getTitle();
@@ -33,6 +33,7 @@ public class Book {
         price = bookForm.getPrice();
         publishDate = bookForm.getPublishDate();
         publisher = bookForm.getPublisher();
+        soldQty = 0;
     }
     public String getId() {
         return id;

@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.bookstore.model.BoughtInformation;
 import com.bookstore.model.User;
 
 public class CustomUserDetails implements UserDetails{
@@ -51,5 +52,9 @@ public class CustomUserDetails implements UserDetails{
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public List<BoughtInformation> getCart() {
+        return user.getCart();
     }
 }
