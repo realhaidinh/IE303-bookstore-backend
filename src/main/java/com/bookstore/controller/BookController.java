@@ -28,6 +28,9 @@ import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("api/book")
+/**
+ * Controller quản lý sách
+ */
 public class BookController {
     @Autowired
     private BookRepository bookRepository;
@@ -35,16 +38,31 @@ public class BookController {
     private FileStorageService fileStorageService;
 
     @GetMapping("/{id}")
+    /**
+     * 
+     * @param id id sách
+     * @return Http status 200 và thông tin sách nếu tìm thấy, ngược lại status 404
+     */
     public ResponseEntity<?> findBookById(@PathVariable("id") String id) {
         try {
             Book book = bookRepository.findById(id).get();
             return new ResponseEntity<>(book, HttpStatusCode.valueOf(200));
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(404));
         }
     }
 
     @GetMapping()
+    /**
+     * Tìm sách theo query string
+     * @param author tên tác giả
+     * @param genre thể loại
+     * @param field trường sắp xếp
+     * @param pageNumber số trang
+     * @param pageSize số lượng sách trong trang
+     * @param sort sắp xếp theo thứ tự tăng dần (ASC) hoặc giảm dần (DESC)
+     * @return trang chứa các sách thỏa mãn thông tin trên
+     */
     public Page<Book> findBookByQuery(@RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "genre", required = false) String genre,
             @RequestParam(value = "by", required = false, defaultValue = "id") String field,
@@ -67,7 +85,12 @@ public class BookController {
         }
         return bookRepository.findAll(page);
     }
-
+    /**
+     * Tạo sách mới
+     * @param bookForm thông tin sách
+     * @param files hình ảnh sách
+     * @return Http status 201 và sách nếu thành công, ngược lại trả về 400
+     */
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createBook(@ModelAttribute BookForm bookForm,
             @RequestParam("images") MultipartFile[] files) {
@@ -88,6 +111,11 @@ public class BookController {
     }
 
     @DeleteMapping()
+    /**
+     * Xóa sách theo id
+     * @param id id sách cần xóa
+     * @return Http status 200 nếu thành công, ngược lại trả về 400
+     */
     public ResponseEntity<?> deleteBook(@RequestParam("id") String id) {
         try {
             Book book = bookRepository.findById(id).get();
@@ -101,7 +129,13 @@ public class BookController {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
-
+    /**
+     * Cập nhật thông tin sách theo id
+     * @param id id sách muốn cập nhật
+     * @param bookForm thông tin sách
+     * @param files hình ảnh sách
+     * @return Http status 200 và sách nếu thành công, ngược lại trả về 400
+     */
     @PatchMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateBook(@RequestParam(value = "id", required = true) String id,
             @ModelAttribute BookForm bookForm, @RequestParam(value = "images", required = false) MultipartFile[] files) {

@@ -6,6 +6,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "user", path = "user")
 public interface UserRepository extends MongoRepository<User, String>{
-    // User findByUsername(String username);
+    /**
+     * Tìm tài khoản theo tên tài khoản người dùng (username)
+     * @param username tên tài khoản người dùng (username)
+     * @return tài khoản
+     */
     User findByUsername(@Param(value = "username") String username);
 }

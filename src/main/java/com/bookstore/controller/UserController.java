@@ -21,10 +21,12 @@ import com.bookstore.repository.BookRepository;
 import com.bookstore.model.Profile;
 import com.bookstore.model.Book;
 import java.util.List;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("/api/user")
 @RestController
+/**
+ * Controller quản lý tài khoản người dùng
+ */
 public class UserController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -36,7 +38,12 @@ public class UserController {
     BookRepository bookRepository;
 
     @GetMapping("/profile")
+    /**
+     * Lấy thông tin người dùng
+     * @return thông tin người dùng
+     */
     public Profile getUserProfile() {
+        //Tìm người dùng trong spring security dựa theo token được gửi đến
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var user = (CustomUserDetails) auth.getPrincipal();
         String role = user.getAuthorities()
@@ -48,7 +55,11 @@ public class UserController {
     }
 
     @GetMapping("/cart")
-    public List<BoughtInformation> findCart(@RequestParam String param) {
+    /**
+     * Tìm giỏ hàng của người dùng
+     * @return giỏ hàng
+     */
+    public List<BoughtInformation> findCart() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var authUser = (CustomUserDetails) auth.getPrincipal();
         User user = userRepository.findByUsername(authUser.getUsername());
@@ -56,14 +67,23 @@ public class UserController {
     }
 
     @GetMapping("/order")
-    public List<Order> findAllUserOrder(@RequestParam String param) {
+    /**
+     * Tìm hóa đơn của người dùng
+     * @return danh sách hóa đơn
+     */
+    public List<Order> findAllUserOrder() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var authUser = (CustomUserDetails) auth.getPrincipal();
         return orderRepository.findByUsername(authUser.getUsername());
     }
 
     @PostMapping("/cart")
-    public ResponseEntity<?> postMethodName(@RequestBody List<BoughtInformation> newCart) {
+    /**
+     * Cập nhật giỏ hàng
+     * @param newCart giỏ hàng mới
+     * @return Http status 200 nếu thành công, ngược lại trả về 400
+     */
+    public ResponseEntity<?> updateCart(@RequestBody List<BoughtInformation> newCart) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var authUser = (CustomUserDetails) auth.getPrincipal();
         User user = userRepository.findByUsername(authUser.getUsername());

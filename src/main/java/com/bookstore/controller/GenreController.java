@@ -20,19 +20,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("api/genre")
+/**
+ * Controller quản lý thể loại sách
+ */
 public class GenreController {
     @Autowired
     GenreRepository genreRepository;
     @GetMapping()
+    /**
+     * Tìm tất cả các thể loại sách
+     * @return Danh sách toàn bộ thể loại sách
+     */
     public List<Genre> findAllGenre() {
         return genreRepository.findAll();
     }
     @GetMapping("/{name}")
+    /**
+     * Tìm thể loại sách theo tên thể loại
+     * @param name tên thể loại sách
+     * @return thể loại sách
+     */
     public Genre findGenreByName(@PathVariable("name") String name) {
         return genreRepository.findByName(name);
     }
     
     @PostMapping()
+    /**
+     * Tạo thể loại sách mới
+     * @param genre thông tin thể loại sách
+     * @return Http status 201 và thể loại sách nếu thành công, ngược lại trả về 400
+     */
     public ResponseEntity<?> createGenre(@RequestBody Genre genre) {
         try {
             Genre savedGenre = genreRepository.save(genre);
@@ -43,11 +60,27 @@ public class GenreController {
         }
     }
     @DeleteMapping()
+    /**
+     * 
+     * @param id id thể loại sách
+     * @return Http status 200 nếu thành công, ngược lại 400 nếu thất bại
+     */
     public ResponseEntity<?> deleteGenre(@RequestParam(name = "id", required = true) String id) {
-        genreRepository.deleteById(id);
-        return new ResponseEntity<>(HttpStatusCode.valueOf(200));
+        try {
+            genreRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatusCode.valueOf(200));
+            
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+        }
     }
     @PatchMapping()
+    /**
+     * 
+     * @param id id thể loại sách
+     * @param newGenre thông tin sách cập nhật
+     * @return Http status 201 và thể loại sách nếu thành công, ngược lại trả về 400
+     */
     public ResponseEntity<?> updateGenre(@RequestParam(name = "id", required = true) String id, @RequestBody Genre newGenre) {
         try {
             Genre genre = genreRepository.findById(id).get();

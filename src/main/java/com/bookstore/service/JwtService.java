@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+/**
+ * Service phụ trách khởi tạo và giải mã Json webtoken
+ */
 public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
@@ -23,6 +26,11 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
     public JwtService( ) { }
+    /**
+     * Lấy tên người dùng từ jwt
+     * @param token jwt 
+     * @return tên người dùng
+     */
     public String extractUsername(String token) {
         try {
             return extractClaim(token, Claims::getSubject);
@@ -36,7 +44,11 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
+    /**
+     * Khởi tạo jwt
+     * @param userDetails thông tin người dùng
+     * @return jwt
+     */
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }

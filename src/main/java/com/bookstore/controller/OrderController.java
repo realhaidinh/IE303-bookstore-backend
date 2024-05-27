@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RequestMapping("/api/order")
 @RestController
+/**
+ * Controller quản lý đơn hàng
+ */
 public class OrderController {
     @Autowired
     OrderRepository orderRepository;

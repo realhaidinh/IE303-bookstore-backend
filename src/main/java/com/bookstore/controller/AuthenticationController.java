@@ -34,10 +34,15 @@ public class AuthenticationController {
 
     public static final String defaultAvatar = "public/avatar/default.png";
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    /**
+     * Thực hiện việc đăng nhập
+     * @param loginRequest thông tin tài khoản đăng nhập
+     * @return Http response 404 nếu không tìm thấy tài khoản, ngược lại trả về token của người dùng
+     */
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user == null) {
-            return new ResponseEntity<LoginResponse>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -50,6 +55,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
+    /**
+     * Đăng ký tài khoản
+     * @param user thông tin người dùng muốn đăng ký tài khoản
+     * @return Trả về Http response 200 và thông tin người dùng sau khi đăng ký thành công
+     */
     public ResponseEntity<User> signup(@RequestBody User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(400));
@@ -66,7 +76,12 @@ public class AuthenticationController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<Boolean> update(@RequestBody User updateUser) {
+    /**
+     * Cập nhật thông tin tài khoản
+     * @param updateUser Thông tin người dùng mới được gửi đến
+     * @return HTTP status response 200 nếu thành công, ngược lại trả về 400
+     */
+    public ResponseEntity<?> update(@RequestBody User updateUser) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName());
         if (!updateUser.getPassword().isEmpty()) {
@@ -74,10 +89,10 @@ public class AuthenticationController {
         }
         try {
             userRepository.save(user);
-            return new ResponseEntity<Boolean>(true, HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>(HttpStatusCode.valueOf(200));
             
         } catch (Exception e) {
-            return new ResponseEntity<Boolean>(false, HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>( HttpStatusCode.valueOf(400));
         }
     }
 }

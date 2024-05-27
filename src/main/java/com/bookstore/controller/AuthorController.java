@@ -23,17 +23,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("api/author")
+/**
+ * Controller quản lý Tác giả
+ */
 public class AuthorController {
     @Autowired
     AuthorRepository authorRepository;
     @Autowired
     FileStorageService fileStorageService;
     @GetMapping("/{name}")
+    /**
+     * Tìm tác giả theo tên
+     * @param name tên tác giả cần tìm
+     * @return tác giả 
+     */
     public Author findAuthorByName(@PathVariable("name") String name) {
         return authorRepository.findByName(name);
     }
     
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    /**
+     * Tạo tác giả mới
+     * @param authorForm thông tin tác giả muốn khởi tạo
+     * @param file ảnh tác giả
+     * @return Http status 400 nếu không thành công, ngược lại trả về status 200 và tác giả vừa tạo
+     */
     public ResponseEntity<?> createAuthor(@ModelAttribute AuthorForm authorForm, @RequestParam("image") MultipartFile file) {
         try {
             Author author = new Author(authorForm);
@@ -46,6 +60,11 @@ public class AuthorController {
         }
     }
     @DeleteMapping()
+    /**
+     * Xóa tác giả theo id
+     * @param id id tác giả
+     * @return Http status 200 nếu thành công, ngược lại trả về 400
+     */
     public ResponseEntity<?> deleteAuthor(@RequestParam(value = "id") String id) {
         try {
             Author author = authorRepository.findById(id).get();
@@ -57,6 +76,13 @@ public class AuthorController {
         }
     }
     @PatchMapping()
+    /**
+     * Cập nhật thông tin tác giả
+     * @param id id tác giả
+     * @param authorForm thông tin tác giả
+     * @param file ảnh tác giả
+     * @return Http status 200 nếu thành công, ngược lại trả về 400
+     */
     public ResponseEntity<?> updateAuthor(@RequestParam(value = "id") String id, @ModelAttribute AuthorForm authorForm, @RequestParam("image") MultipartFile file) {
         try {
             Author author = authorRepository.findById(id).get();
