@@ -31,6 +31,11 @@ public class AuthorController {
     AuthorRepository authorRepository;
     @Autowired
     FileStorageService fileStorageService;
+    @GetMapping("")
+    public ResponseEntity<?> findAllAuthor() {
+        return new ResponseEntity<>(authorRepository.findAll(), HttpStatusCode.valueOf(200));
+    }
+    
     @GetMapping("/{name}")
     /**
      * Tìm tác giả theo tên

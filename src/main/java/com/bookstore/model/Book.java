@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class Book {
     @Id
@@ -19,6 +20,7 @@ public class Book {
     BigDecimal price;
     List<String> images;
     String publisher;
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
     Date publishDate;
     public Book() {
         soldQty = 0;

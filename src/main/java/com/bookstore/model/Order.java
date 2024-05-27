@@ -1,6 +1,8 @@
 package com.bookstore.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +13,7 @@ public class Order {
     String username;
     BigDecimal totalPrice;
     String orderStatus;
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
     Date orderAt;
     List<BoughtInformation> orderItems;
     String shippingAddress;
