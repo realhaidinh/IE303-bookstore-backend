@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class Book {
@@ -17,6 +19,7 @@ public class Book {
     Integer stock;
     Integer soldQty;
     Integer pages;
+    @Field(targetType = FieldType.DECIMAL128)
     BigDecimal price;
     List<String> images;
     String publisher;

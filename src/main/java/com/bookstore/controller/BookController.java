@@ -56,6 +56,8 @@ public class BookController {
      * @param author tên tác giả
      * @param genre  thể loại
      * @param title  tên sách
+     * @param sort sắp xếp theo tăng dần ASC hoặc giảm dần DESC, mặc định là tăng dần
+     * @param field trường sắp xếp, mặc định là id
      * @return danh sách sách thỏa mãn thông tin trên
      */
     @GetMapping()
@@ -66,10 +68,10 @@ public class BookController {
             @RequestParam(name = "by", required = false, defaultValue = "id") String field) {
         Sort sortable = null;
         if (sort.equals("ASC")) {
-            sortable = Sort.by(field).ascending();
+            sortable = Sort.by(Sort.Direction.ASC, field);
         }
         if (sort.equals("DESC")) {
-            sortable = Sort.by(field).descending();
+            sortable = Sort.by(Sort.Direction.DESC, field);
         }
         if (author == null && genre == null && title == null)
             return bookRepository.findAll(sortable);
