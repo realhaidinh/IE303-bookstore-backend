@@ -1,11 +1,14 @@
 package com.bookstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bookstore.model.Book;
@@ -21,15 +24,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 import java.math.BigDecimal;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@RequestMapping("/api/order")
-@RestController
 /**
  * Controller quản lý đơn hàng
  */
+@RequestMapping("/api/order")
+@RestController
 public class OrderController {
     @Autowired
     OrderRepository orderRepository;
@@ -40,11 +42,24 @@ public class OrderController {
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * Tìm và trả về danh sách đơn hàng đã phân trang
+     * @param pageNumber số trang
+     * @param pageSize số đơn hàng mỗi trang
+     * @return trang chứa danh sách đơn hàng
+     */
     @GetMapping("")
-    public List<Order> findAllOrder() {
-        return orderRepository.findAll();
+    public Page<Order> findAllOrder(
+        @RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNumber,
+        @RequestParam(value = "size", required = false, defaultValue = "10") Integer pageSize
+    ) {
+        return orderRepository.findAll(PageRequest.of(pageNumber, Integer.min(pageSize, 20)));
     }
-
+    /**
+     * Tìm đơn hàng theo id
+     * @param id id của đơn hàng
+     * @return đơn hàng nếu tìm thấy, ngược lại trả về status 404
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> findOrderById(@PathVariable("id") String id) {
         try {
@@ -54,7 +69,11 @@ public class OrderController {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(404));
         }
     }
-
+    /**
+     * Thanh toán đơn hàng
+     * @param shippingAddress địa chỉ cần thanh toán
+     * @return thông tin đơn hàng nếu thành công, ngược lại trả về http request 400
+     */
     @PostMapping("/checkout")
     public ResponseEntity<?> createOrder(@RequestBody String shippingAddress) {
         try {
@@ -78,13 +97,22 @@ public class OrderController {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
-
+    /**
+     * Xóa đơn hàng theo id
+     * @param id id đơn hàng cần xóa
+     * @return http status 200 nếu thành công
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable("id") String id) {
         orderRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
-
+    /**
+     * Cập nhật đơn hàng theo id
+     * @param id id đơn hàng
+     * @param status trạng thái cập nhật, Đã giao hoặc Đã hủy
+     * @return Thành công trả về http status 200, ngược lại trả về 400
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable("id") String id, @RequestBody String status) {
         try {

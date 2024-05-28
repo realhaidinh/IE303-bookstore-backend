@@ -9,16 +9,16 @@ import com.bookstore.model.Book;
 import com.bookstore.model.Genre;
 import com.bookstore.model.Order;
 
-@Configuration
 /**
  * Cấu hình Rest API
  */
+@Configuration
 public class RestConfiguration implements RepositoryRestConfigurer {
-  @Bean
   /**
    * Cho phép trả về id của document trong database
    * @return
    */
+  @Bean
   public RepositoryRestConfigurer repositoryRestConfigurer() {
     return RepositoryRestConfigurer.withConfig(config -> {
       config.exposeIdsFor(Book.class);

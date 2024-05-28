@@ -9,10 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.springframework.stereotype.Service;
 
-@Service
 /**
  * Service phụ trách việc lưu file ảnh vào server
  */
+@Service
 public class FileStorageService {
     /**
      * Thư mục ảnh mặc định
@@ -37,7 +37,7 @@ public class FileStorageService {
      * @throws IOException
      */
     public void deleteFile(String filename) throws IOException{
-        Path filepath = Paths.get(directory,filename);
+        Path filepath = Paths.get(directory, filename);
         Files.delete(filepath);;
     }
 }

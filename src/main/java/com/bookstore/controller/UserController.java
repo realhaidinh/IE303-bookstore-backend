@@ -1,6 +1,8 @@
 package com.bookstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -71,10 +73,10 @@ public class UserController {
      * Tìm hóa đơn của người dùng
      * @return danh sách hóa đơn
      */
-    public List<Order> findAllUserOrder() {
+    public Page<Order> findAllUserOrder() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var authUser = (CustomUserDetails) auth.getPrincipal();
-        return orderRepository.findByUsername(authUser.getUsername());
+        return orderRepository.findByUsername(authUser.getUsername(), PageRequest.of(0, 10));
     }
 
     @PostMapping("/cart")

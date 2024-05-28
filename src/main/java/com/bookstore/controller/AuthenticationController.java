@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Controller quản lý việc xác thực người dùng
+ */
 @RequestMapping("/api/auth")
 @RestController
 public class AuthenticationController {
@@ -32,13 +35,12 @@ public class AuthenticationController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public static final String defaultAvatar = "public/avatar/default.png";
-    @PostMapping("/login")
     /**
      * Thực hiện việc đăng nhập
      * @param loginRequest thông tin tài khoản đăng nhập
      * @return Http response 404 nếu không tìm thấy tài khoản, ngược lại trả về token của người dùng
      */
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user == null) {
@@ -54,12 +56,12 @@ public class AuthenticationController {
                 HttpStatusCode.valueOf(200));
     }
 
-    @PostMapping("/signup")
     /**
      * Đăng ký tài khoản
      * @param user thông tin người dùng muốn đăng ký tài khoản
      * @return Trả về Http response 200 và thông tin người dùng sau khi đăng ký thành công
      */
+    @PostMapping("/signup")
     public ResponseEntity<User> signup(@RequestBody User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(400));
@@ -75,12 +77,12 @@ public class AuthenticationController {
         return new ResponseEntity<User>(savedUser, HttpStatusCode.valueOf(200));
     }
 
-    @PatchMapping("/update")
     /**
      * Cập nhật thông tin tài khoản
      * @param updateUser Thông tin người dùng mới được gửi đến
      * @return HTTP status response 200 nếu thành công, ngược lại trả về 400
      */
+    @PatchMapping("/update")
     public ResponseEntity<?> update(@RequestBody User updateUser) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName());

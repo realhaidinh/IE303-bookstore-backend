@@ -26,23 +26,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-@RestController
-@RequestMapping("api/book")
 /**
  * Controller quản lý sách
  */
+@RestController
+@RequestMapping("api/book")
 public class BookController {
     @Autowired
     private BookRepository bookRepository;
     @Autowired
     private FileStorageService fileStorageService;
 
-    @GetMapping("/{id}")
     /**
      * 
      * @param id id sách
      * @return Http status 200 và thông tin sách nếu tìm thấy, ngược lại status 404
      */
+    @GetMapping("/{id}")
     public ResponseEntity<?> findBookById(@PathVariable("id") String id) {
         try {
             Book book = bookRepository.findById(id).get();
@@ -52,7 +52,6 @@ public class BookController {
         }
     }
 
-    @GetMapping()
     /**
      * Tìm sách theo query string
      * @param author tên tác giả
@@ -63,6 +62,7 @@ public class BookController {
      * @param sort sắp xếp theo thứ tự tăng dần (ASC) hoặc giảm dần (DESC)
      * @return trang chứa các sách thỏa mãn thông tin trên
      */
+    @GetMapping()
     public Page<Book> findBookByQuery(@RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "genre", required = false) String genre,
             @RequestParam(value = "by", required = false, defaultValue = "id") String field,
@@ -76,6 +76,7 @@ public class BookController {
         if (sort.equals("DESC")) {
             sortable = Sort.by(field).descending();
         }
+        pageSize = Integer.min(pageSize, 20);
         Pageable page = PageRequest.of(pageNumber, pageSize, sortable);
         if (author != null) {
             return bookRepository.findByAuthor(author, page);
@@ -98,7 +99,8 @@ public class BookController {
             List<String> images = new ArrayList<>();
             for (MultipartFile file : files) {
                 fileStorageService.saveFile(file);
-                images.add(file.getOriginalFilename());
+                //Lưu địa chỉ file được public trên server
+                images.add(String.format("http://127.0.0.1:8080/images/%s", file.getOriginalFilename()));
             }
             Book book = new Book(bookForm);
             book.setImages(images);
@@ -110,18 +112,20 @@ public class BookController {
         }
     }
 
-    @DeleteMapping()
     /**
      * Xóa sách theo id
      * @param id id sách cần xóa
      * @return Http status 200 nếu thành công, ngược lại trả về 400
      */
+    @DeleteMapping()
     public ResponseEntity<?> deleteBook(@RequestParam("id") String id) {
         try {
             Book book = bookRepository.findById(id).get();
             var images = book.getImages();
             for (var image : images) {
-                fileStorageService.deleteFile(image);
+                // Tìm tên file
+                var split = image.split("/");
+                fileStorageService.deleteFile(split[split.length - 1]);
             }
             bookRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatusCode.valueOf(200));

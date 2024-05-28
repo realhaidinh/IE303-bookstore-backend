@@ -19,18 +19,27 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.bookstore.service.UserService;
 
+/**
+ * Cấu hình Spring Security các service xác thực người dùng
+ */
 @Configuration
 public class WebSecurityConfig {
     @Autowired
     UserService userService;
     @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    /**
+     * Cấu hình bộ mã hóa cho mã hóa mật khẩu
+     * @return
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+    /**
+     * Cấu hình cors
+     * @return
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -56,7 +65,12 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
-
+    /**
+     * Cấu hình các role người dùng được phép truy cập vào các api route
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
