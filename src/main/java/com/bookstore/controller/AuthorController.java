@@ -67,7 +67,7 @@ public class AuthorController {
         try {
             Author author = new Author(authorForm);
             fileStorageService.saveFile(file);
-            author.setImage(file.getOriginalFilename());
+            author.setImage(String.format("http://127.0.0.1:8080/images/%s", file.getOriginalFilename()));
             authorRepository.save(author);
             return new ResponseEntity<>(author, HttpStatusCode.valueOf(201));
         } catch (Exception e) {
@@ -84,7 +84,8 @@ public class AuthorController {
         try {
             Author author = authorRepository.findById(id).get();
             authorRepository.deleteById(id);
-            fileStorageService.deleteFile(author.getImage());
+            var split = author.getImage().split("/");
+            fileStorageService.deleteFile(split[split.length - 1]);
             return new ResponseEntity<>(HttpStatusCode.valueOf(200));
         } catch (Exception e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(400));
@@ -102,7 +103,7 @@ public class AuthorController {
         try {
             Author author = authorRepository.findById(id).get();
             fileStorageService.saveFile(file);
-            author.setImage(file.getOriginalFilename());
+            author.setImage(String.format("http://127.0.0.1:8080/images/%s", file.getOriginalFilename()));
             var result = authorRepository.save(author);
             return new ResponseEntity<>(result, HttpStatusCode.valueOf(200));
         } catch (Exception e) {
