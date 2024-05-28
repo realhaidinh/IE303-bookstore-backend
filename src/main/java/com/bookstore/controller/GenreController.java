@@ -5,8 +5,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import java.util.List;
 
 import com.bookstore.model.Genre;
 import com.bookstore.repository.GenreRepository;
@@ -35,10 +34,8 @@ public class GenreController {
      * @return Danh sách toàn bộ thể loại sách
      */
     @GetMapping()
-    public Page<Genre> findAllGenre(
-            @RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNumber,
-            @RequestParam(value = "size", required = false, defaultValue = "5") Integer pageSize) {
-        return genreRepository.findAll(PageRequest.of(pageNumber, Integer.min(pageSize, 20)));
+    public List<Genre> findAllGenre() {
+        return genreRepository.findAll();
     }
 
     /**

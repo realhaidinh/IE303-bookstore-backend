@@ -1,14 +1,12 @@
 package com.bookstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import java.util.List;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bookstore.model.Book;
@@ -43,17 +41,12 @@ public class OrderController {
     UserRepository userRepository;
 
     /**
-     * Tìm và trả về danh sách đơn hàng đã phân trang
-     * @param pageNumber số trang
-     * @param pageSize số đơn hàng mỗi trang
-     * @return trang chứa danh sách đơn hàng
+     * Tìm và trả về danh sách đơn hàng tất cả
+     * @return danh sách tất cả đơn hàng
      */
-    @GetMapping("")
-    public Page<Order> findAllOrder(
-        @RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNumber,
-        @RequestParam(value = "size", required = false, defaultValue = "10") Integer pageSize
-    ) {
-        return orderRepository.findAll(PageRequest.of(pageNumber, Integer.min(pageSize, 20)));
+    @GetMapping("/all")
+    public List<Order> findAllOrder() {
+        return orderRepository.findAll();
     }
     /**
      * Tìm đơn hàng theo id

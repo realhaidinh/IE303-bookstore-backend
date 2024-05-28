@@ -21,10 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 /**
  * Controller quản lý sách
@@ -56,35 +52,29 @@ public class BookController {
      * Tìm sách theo query string
      * @param author tên tác giả
      * @param genre thể loại
-     * @param field trường sắp xếp
-     * @param pageNumber số trang
-     * @param pageSize số lượng sách trong trang
-     * @param sort sắp xếp theo thứ tự tăng dần (ASC) hoặc giảm dần (DESC)
-     * @return trang chứa các sách thỏa mãn thông tin trên
+     * @param title tên sách
+     * @return danh sách sách thỏa mãn thông tin trên
      */
     @GetMapping()
-    public Page<Book> findBookByQuery(@RequestParam(value = "author", required = false) String author,
+    public List<Book> findBookByQuery(@RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "genre", required = false) String genre,
-            @RequestParam(value = "by", required = false, defaultValue = "id") String field,
-            @RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNumber,
-            @RequestParam(value = "size", required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(value = "sort", required = false, defaultValue = "ASC") String sort) {
-        Sort sortable = null;
-        if (sort.equals("ASC")) {
-            sortable = Sort.by(field).ascending();
-        }
-        if (sort.equals("DESC")) {
-            sortable = Sort.by(field).descending();
-        }
-        pageSize = Integer.min(pageSize, 20);
-        Pageable page = PageRequest.of(pageNumber, pageSize, sortable);
-        if (author != null) {
-            return bookRepository.findByAuthor(author, page);
-        }
-        if (genre != null) {
-            return bookRepository.findByGenre(genre, page);
-        }
-        return bookRepository.findAll(page);
+            @RequestParam(value = "title", required = false) String title
+        ) {
+        if(author == null && genre == null && title == null) 
+            return bookRepository.findAll();
+        else if(author == null && genre == null && title != null) 
+            return bookRepository.findByTitleLikeAllIgnoreCase(title);
+        else if(author == null && genre != null && title == null) 
+            return bookRepository.findByGenre(genre);
+        else if(author == null && genre != null && title != null) 
+            return bookRepository.findByTitleLikeAllIgnoreCaseAndGenre(title, genre);
+        else if(author != null && genre == null && title == null) 
+            return bookRepository.findByAuthor(author);
+        else if(author != null && genre == null && title != null) 
+            return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthor(title, author);
+        else if(author != null && genre !=null && title ==null) 
+            return bookRepository.findByAuthorAndGenre(author, genre);
+        return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthorAndGenre(title, author, genre);
     }
     /**
      * Tạo sách mới

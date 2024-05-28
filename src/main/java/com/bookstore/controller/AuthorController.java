@@ -1,7 +1,6 @@
 package com.bookstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,22 +21,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
-@RestController
-@RequestMapping("api/author")
 /**
  * Controller quản lý Tác giả
  */
+@RestController
+@RequestMapping("api/author")
 public class AuthorController {
     @Autowired
     AuthorRepository authorRepository;
     @Autowired
     FileStorageService fileStorageService;
+    /**
+     * Tìm tất cả tác giả
+     * @return danh sách tất cả tác giả
+     */
     @GetMapping("")
-    public ResponseEntity<?> findAllAuthor(
-        @RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNumber,
-        @RequestParam(value = "size", required = false, defaultValue = "10") Integer pageSize
-    ) {
-        return new ResponseEntity<>(authorRepository.findAll(PageRequest.of(pageNumber, Integer.min(pageSize, 20))), HttpStatusCode.valueOf(200));
+    public ResponseEntity<?> findAllAuthor() {
+        return new ResponseEntity<>(authorRepository.findAll(), HttpStatusCode.valueOf(200));
     }
     
     @GetMapping("/{name}")

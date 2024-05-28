@@ -1,8 +1,6 @@
 package com.bookstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +21,7 @@ import com.bookstore.repository.BookRepository;
 import com.bookstore.model.Profile;
 import com.bookstore.model.Book;
 import java.util.List;
+
 
 @RequestMapping("/api/user")
 @RestController
@@ -73,10 +72,10 @@ public class UserController {
      * Tìm hóa đơn của người dùng
      * @return danh sách hóa đơn
      */
-    public Page<Order> findAllUserOrder() {
+    public List<Order> findAllUserOrder() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var authUser = (CustomUserDetails) auth.getPrincipal();
-        return orderRepository.findByUsername(authUser.getUsername(), PageRequest.of(0, 10));
+        return orderRepository.findByUsername(authUser.getUsername());
     }
 
     @PostMapping("/cart")
@@ -105,4 +104,13 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
+    /** 
+     * Tìm tất cả tài khoản
+     * @return danh sách tất cả tài khoản
+     */
+    @GetMapping("all")
+    public List<User> findAllUser() {
+        return userRepository.findAll();
+    }
+    
 }
