@@ -2,10 +2,14 @@ package com.bookstore.model;
 
 import java.math.BigDecimal;
 
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
 public class BoughtInformation {
     String itemId;
     String title;
     Integer quantity;
+    @Field(targetType = FieldType.DECIMAL128)
     BigDecimal price;
     String image;
     public BoughtInformation() {

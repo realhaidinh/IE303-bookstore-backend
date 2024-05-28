@@ -94,6 +94,7 @@ public class UserController {
                 if(book.getStock() < item.getQuantity()) {
                     return new ResponseEntity<>(HttpStatusCode.valueOf(400));
                 }
+                item.setTitle(book.getTitle());
                 item.setImage(book.getImages().get(0));
                 item.setPrice(book.getPrice());
             }
