@@ -83,6 +83,8 @@ public class WebSecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/images/**")
                         .permitAll()
+                        .requestMatchers("/api/recommend/**") 
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/profile")
                         .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/user/cart")
