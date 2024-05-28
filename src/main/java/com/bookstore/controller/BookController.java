@@ -139,7 +139,7 @@ public class BookController {
                 List<String> images = new ArrayList<>();
                 for (MultipartFile file : files) {
                     fileStorageService.saveFile(file);
-                    images.add(file.getOriginalFilename());
+                    images.add(String.format("http://127.0.0.1:8080/images/%s", file.getOriginalFilename()));
                 }
                 book.setImages(images);
             }
