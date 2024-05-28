@@ -26,11 +26,11 @@ public interface BookRepository extends MongoRepository<Book, String>{
      * @param genre tên thể loại
      * @return danh sách sách theo thể loại
      */
-    List<Book> findByGenre(@Param(value = "genre") String genre);
+    List<Book> findByGenreIn(@Param(value = "genre") List<String> genre);
 
-    List<Book> findByAuthorAndGenre(@Param(value = "author") String author, @Param(value = "genre") String genre);
+    List<Book> findByAuthorAndGenreIn(@Param(value = "author") String author, @Param(value = "genre") List<String> genre);
 
-    List<Book> findByTitleLikeAllIgnoreCaseAndGenre(@Param(value = "title") String title, @Param(value = "genre") String genre);
-    List<Book> findByTitleLikeAllIgnoreCaseAndAuthorAndGenre(@Param(value = "title") String title, @Param(value = "author") String author, @Param(value = "genre") String genre);
+    List<Book> findByTitleLikeAllIgnoreCaseAndGenreIn(@Param(value = "title") String title, @Param(value = "genre") List<String> genre);
+    List<Book> findByTitleLikeAllIgnoreCaseAndAuthorAndGenreIn(@Param(value = "title") String title, @Param(value = "author") String author, @Param(value = "genre") List<String> genre);
     List<Book> findByTitleLikeAllIgnoreCaseAndAuthor(@Param(value = "title") String title, @Param(value = "author") String author);
 }

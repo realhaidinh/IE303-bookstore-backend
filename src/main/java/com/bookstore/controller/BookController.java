@@ -57,7 +57,7 @@ public class BookController {
      */
     @GetMapping()
     public List<Book> findBookByQuery(@RequestParam(value = "author", required = false) String author,
-            @RequestParam(value = "genre", required = false) String genre,
+            @RequestParam(value = "genre", required = false) List<String> genre,
             @RequestParam(value = "title", required = false) String title
         ) {
         if(author == null && genre == null && title == null) 
@@ -65,16 +65,16 @@ public class BookController {
         else if(author == null && genre == null && title != null) 
             return bookRepository.findByTitleLikeAllIgnoreCase(title);
         else if(author == null && genre != null && title == null) 
-            return bookRepository.findByGenre(genre);
+            return bookRepository.findByGenreIn(genre);
         else if(author == null && genre != null && title != null) 
-            return bookRepository.findByTitleLikeAllIgnoreCaseAndGenre(title, genre);
+            return bookRepository.findByTitleLikeAllIgnoreCaseAndGenreIn(title, genre);
         else if(author != null && genre == null && title == null) 
             return bookRepository.findByAuthor(author);
         else if(author != null && genre == null && title != null) 
             return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthor(title, author);
         else if(author != null && genre !=null && title ==null) 
-            return bookRepository.findByAuthorAndGenre(author, genre);
-        return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthorAndGenre(title, author, genre);
+            return bookRepository.findByAuthorAndGenreIn(author, genre);
+        return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthorAndGenreIn(title, author, genre);
     }
     /**
      * Tạo sách mới
