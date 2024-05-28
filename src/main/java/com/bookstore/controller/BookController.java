@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+
 import com.bookstore.model.Book;
 import com.bookstore.model.BookForm;
 import com.bookstore.repository.BookRepository;
@@ -50,36 +52,47 @@ public class BookController {
 
     /**
      * Tìm sách theo query string
+     * 
      * @param author tên tác giả
-     * @param genre thể loại
-     * @param title tên sách
+     * @param genre  thể loại
+     * @param title  tên sách
      * @return danh sách sách thỏa mãn thông tin trên
      */
     @GetMapping()
     public List<Book> findBookByQuery(@RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "genre", required = false) List<String> genre,
-            @RequestParam(value = "title", required = false) String title
-        ) {
-        if(author == null && genre == null && title == null) 
-            return bookRepository.findAll();
-        else if(author == null && genre == null && title != null) 
-            return bookRepository.findByTitleLikeAllIgnoreCase(title);
-        else if(author == null && genre != null && title == null) 
-            return bookRepository.findByGenreIn(genre);
-        else if(author == null && genre != null && title != null) 
-            return bookRepository.findByTitleLikeAllIgnoreCaseAndGenreIn(title, genre);
-        else if(author != null && genre == null && title == null) 
-            return bookRepository.findByAuthor(author);
-        else if(author != null && genre == null && title != null) 
-            return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthor(title, author);
-        else if(author != null && genre !=null && title ==null) 
-            return bookRepository.findByAuthorAndGenreIn(author, genre);
-        return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthorAndGenreIn(title, author, genre);
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(name = "sort", required = false, defaultValue = "ASC") String sort,
+            @RequestParam(name = "by", required = false, defaultValue = "id") String field) {
+        Sort sortable = null;
+        if (sort.equals("ASC")) {
+            sortable = Sort.by(field).ascending();
+        }
+        if (sort.equals("DESC")) {
+            sortable = Sort.by(field).descending();
+        }
+        if (author == null && genre == null && title == null)
+            return bookRepository.findAll(sortable);
+        else if (author == null && genre == null && title != null)
+            return bookRepository.findByTitleLikeAllIgnoreCase(title, sortable);
+        else if (author == null && genre != null && title == null)
+            return bookRepository.findByGenreIn(genre, sortable);
+        else if (author == null && genre != null && title != null)
+            return bookRepository.findByTitleLikeAllIgnoreCaseAndGenreIn(title, genre, sortable);
+        else if (author != null && genre == null && title == null)
+            return bookRepository.findByAuthor(author, sortable);
+        else if (author != null && genre == null && title != null)
+            return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthor(title, author, sortable);
+        else if (author != null && genre != null && title == null)
+            return bookRepository.findByAuthorAndGenreIn(author, genre, sortable);
+        return bookRepository.findByTitleLikeAllIgnoreCaseAndAuthorAndGenreIn(title, author, genre, sortable);
     }
+
     /**
      * Tạo sách mới
+     * 
      * @param bookForm thông tin sách
-     * @param files hình ảnh sách
+     * @param files    hình ảnh sách
      * @return Http status 201 và sách nếu thành công, ngược lại trả về 400
      */
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -89,7 +102,7 @@ public class BookController {
             List<String> images = new ArrayList<>();
             for (MultipartFile file : files) {
                 fileStorageService.saveFile(file);
-                //Lưu địa chỉ file được public trên server
+                // Lưu địa chỉ file được public trên server
                 images.add(String.format("http://127.0.0.1:8080/images/%s", file.getOriginalFilename()));
             }
             Book book = new Book(bookForm);
@@ -98,12 +111,13 @@ public class BookController {
             return new ResponseEntity<Book>(result, HttpStatusCode.valueOf(201));
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(),HttpStatusCode.valueOf(400));
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
 
     /**
      * Xóa sách theo id
+     * 
      * @param id id sách cần xóa
      * @return Http status 200 nếu thành công, ngược lại trả về 400
      */
@@ -123,16 +137,18 @@ public class BookController {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
+
     /**
      * Cập nhật thông tin sách theo id
-     * @param id id sách muốn cập nhật
+     * 
+     * @param id       id sách muốn cập nhật
      * @param bookForm thông tin sách
-     * @param files hình ảnh sách
+     * @param files    hình ảnh sách
      * @return Http status 200 và sách nếu thành công, ngược lại trả về 400
      */
-    @PatchMapping(path = "/{id}",consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PatchMapping(path = "/{id}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateBook(@PathVariable("id") String id,
-            @ModelAttribute BookForm bookForm, 
+            @ModelAttribute BookForm bookForm,
             @RequestParam(value = "images", required = false) MultipartFile[] files) {
         try {
             Book book = bookRepository.findById(id).get();
