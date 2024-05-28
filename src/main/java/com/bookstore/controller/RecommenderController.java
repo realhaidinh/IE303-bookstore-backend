@@ -17,7 +17,7 @@ public class RecommenderController {
 
     @PostMapping()
     public List<Book> recommendBooks(@RequestBody Book targetBook, @RequestParam int numberOfRecommendations) {
-        System.out.println(targetBook);
+        
         return recommender.recommend(targetBook, numberOfRecommendations);
     }
 }

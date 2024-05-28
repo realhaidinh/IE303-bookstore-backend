@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import java.util.List;
 
 /**
  * Controller quản lý sách
@@ -74,7 +75,15 @@ public class BookController {
             sortable = Sort.by(Sort.Direction.DESC, field);
         }
         if (author == null && genre == null && title == null)
-            return bookRepository.findAll(sortable);
+            {
+                try {
+                    List<Book> test = bookRepository.findAll(sortable);
+                    return test;
+                } catch (Exception e) {
+                    System.out.println(e);
+                } 
+            
+            }
         else if (author == null && genre == null && title != null)
             return bookRepository.findByTitleLikeAllIgnoreCase(title, sortable);
         else if (author == null && genre != null && title == null)

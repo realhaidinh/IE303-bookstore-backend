@@ -16,9 +16,10 @@ public class Recommender {
     private BookRepository bookRepository;
 
     public List<Book> recommend(Book targetBook, int numberOfRecommendations) {
+        System.out.println("da vao dc day");
         List<Book> allBooks = bookRepository.findAll();
 
-        System.out.println(allBooks);
+        System.out.println("Tat ca sach:" + allBooks);
 
         Map<Book, Double> bookScores = new HashMap<>();
 
