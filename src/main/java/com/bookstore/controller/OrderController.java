@@ -73,6 +73,9 @@ public class OrderController {
             var authentication = SecurityContextHolder.getContext().getAuthentication();
             User user = userRepository.findByUsername(authentication.getName());
             var cart = user.getCart();
+            if(cart == null || cart.isEmpty()) {
+                return new ResponseEntity<>("Giỏ hàng trống", HttpStatusCode.valueOf(400));
+            }
             Order order = new Order(user.getUsername(), cart, shippingAddress);
             for (var item : cart) {
                 Book book = bookRepository.findById(item.getItemId()).get();
@@ -82,10 +85,11 @@ public class OrderController {
                 var price = book.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
                 order.setTotalPrice(order.getTotalPrice().add(price));
             }
-            user.setCart(null);
+            var savedOrder = orderRepository.save(order);
+            cart.clear();
+            user.setCart(cart);
             userRepository.save(user);
-            orderRepository.save(order);
-            return new ResponseEntity<>(order, HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>(savedOrder, HttpStatusCode.valueOf(200));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
@@ -124,6 +128,7 @@ public class OrderController {
                     }
                     book.setStock(book.getStock() - item.getQuantity());
                     book.setSoldQty(book.getSoldQty() + item.getQuantity());
+                    bookRepository.save(book);
                 }
             }
             orderRepository.save(order);
