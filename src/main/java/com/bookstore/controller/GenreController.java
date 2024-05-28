@@ -42,11 +42,16 @@ public class GenreController {
      * Tìm thể loại sách theo tên thể loại
      * 
      * @param name tên thể loại sách
-     * @return thể loại sách
+     * @return thể loại sách và http status 200 nếu thành công, ngược lại trả về http status 404
      */
-    @GetMapping("/{name}")
-    public Genre findGenreByName(@PathVariable("name") String name) {
-        return genreRepository.findByName(name);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findGenreByName(@PathVariable("id") String id) {
+        try {
+            var genre = genreRepository.findById(id).get();
+            return new ResponseEntity<>(genre, HttpStatusCode.valueOf(200));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
     }
 
     /**
@@ -71,8 +76,8 @@ public class GenreController {
      * @param id id thể loại sách
      * @return Http status 200 nếu thành công, ngược lại 400 nếu thất bại
      */
-    @DeleteMapping()
-    public ResponseEntity<?> deleteGenre(@RequestParam(name = "id", required = true) String id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteGenre(@PathVariable(name="id") String id) {
         try {
             genreRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatusCode.valueOf(200));
@@ -84,12 +89,12 @@ public class GenreController {
 
     /**
      * 
-     * @param id       id thể loại sách
+     * @param id id thể loại sách
      * @param newGenre thông tin sách cập nhật
      * @return Http status 201 và thể loại sách nếu thành công, ngược lại trả về 400
      */
-    @PatchMapping()
-    public ResponseEntity<?> updateGenre(@RequestParam(name = "id", required = true) String id,
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateGenre(@PathVariable(name = "id") String id,
             @RequestBody Genre newGenre) {
         try {
             Genre genre = genreRepository.findById(id).get();

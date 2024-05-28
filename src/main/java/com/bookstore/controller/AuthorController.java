@@ -40,14 +40,20 @@ public class AuthorController {
         return new ResponseEntity<>(authorRepository.findAll(), HttpStatusCode.valueOf(200));
     }
     
-    @GetMapping("/{name}")
+    @GetMapping("/{id}")
     /**
-     * Tìm tác giả theo tên
-     * @param name tên tác giả cần tìm
-     * @return tác giả 
+     * Tìm tác giả theo id
+     * @param name id tác giả cần tìm
+     * @return tác giả nếu tìm thấy và http status 200, ngược lại trả về http status 404
      */
-    public Author findAuthorByName(@PathVariable("name") String name) {
-        return authorRepository.findByName(name);
+    public ResponseEntity<?> findAuthorById(@PathVariable("id") String id) {
+        try {
+            Author author = authorRepository.findById(id).get();
+            return new ResponseEntity<>(author, HttpStatusCode.valueOf(200));
+            
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
     }
     
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -68,13 +74,13 @@ public class AuthorController {
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     /**
      * Xóa tác giả theo id
      * @param id id tác giả
      * @return Http status 200 nếu thành công, ngược lại trả về 400
      */
-    public ResponseEntity<?> deleteAuthor(@RequestParam(value = "id") String id) {
+    public ResponseEntity<?> deleteAuthor(@PathVariable("id") String id) {
         try {
             Author author = authorRepository.findById(id).get();
             authorRepository.deleteById(id);
@@ -84,7 +90,7 @@ public class AuthorController {
             return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(400));
         }
     }
-    @PatchMapping()
+    @PatchMapping("/{id}")
     /**
      * Cập nhật thông tin tác giả
      * @param id id tác giả
@@ -92,7 +98,7 @@ public class AuthorController {
      * @param file ảnh tác giả
      * @return Http status 200 nếu thành công, ngược lại trả về 400
      */
-    public ResponseEntity<?> updateAuthor(@RequestParam(value = "id") String id, @ModelAttribute AuthorForm authorForm, @RequestParam("image") MultipartFile file) {
+    public ResponseEntity<?> updateAuthor(@PathVariable("id") String id, @ModelAttribute AuthorForm authorForm, @RequestParam("image") MultipartFile file) {
         try {
             Author author = authorRepository.findById(id).get();
             fileStorageService.saveFile(file);

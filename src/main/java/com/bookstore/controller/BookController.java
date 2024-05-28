@@ -107,8 +107,8 @@ public class BookController {
      * @param id id sách cần xóa
      * @return Http status 200 nếu thành công, ngược lại trả về 400
      */
-    @DeleteMapping()
-    public ResponseEntity<?> deleteBook(@RequestParam("id") String id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable("id") String id) {
         try {
             Book book = bookRepository.findById(id).get();
             var images = book.getImages();
@@ -130,9 +130,10 @@ public class BookController {
      * @param files hình ảnh sách
      * @return Http status 200 và sách nếu thành công, ngược lại trả về 400
      */
-    @PatchMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<?> updateBook(@RequestParam(value = "id", required = true) String id,
-            @ModelAttribute BookForm bookForm, @RequestParam(value = "images", required = false) MultipartFile[] files) {
+    @PatchMapping(path = "/{id}",consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> updateBook(@PathVariable("id") String id,
+            @ModelAttribute BookForm bookForm, 
+            @RequestParam(value = "images", required = false) MultipartFile[] files) {
         try {
             Book book = bookRepository.findById(id).get();
             if (files != null) {
