@@ -1,6 +1,8 @@
 package com.bookstore.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -11,6 +13,7 @@ public class Order {
     @Id
     String id;
     String username;
+    @Field(targetType = FieldType.DECIMAL128)
     BigDecimal totalPrice;
     String orderStatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd") 
