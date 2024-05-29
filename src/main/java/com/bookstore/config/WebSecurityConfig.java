@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -86,32 +87,32 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/recommend/**") 
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/profile")
-                        .permitAll()
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/user/cart")
-                        .permitAll()
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/user/cart")
-                        .permitAll()
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/user/order")
-                        .permitAll()
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/auth/update")
-                        .permitAll()
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/book/**", "api/genre/**", "/api/author/**")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/book/**", "api/genre/**", "/api/author/**")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/book/**", "api/genre/**", "api/author/**")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/order/all")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/user/all")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/order/**")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/order/**")
-                        .permitAll()
+                        .hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/order/checkout")
-                        .permitAll()
-                        .anyRequest().denyAll());
+                        .hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
